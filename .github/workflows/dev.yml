@@ -1,0 +1,29 @@
+name: Update CustApp Submodule
+
+on:
+  repository_dispatch:
+    types: [update-submodule]
+
+jobs:
+  update-state-components:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true # To ensure we update the submodules
+
+      # Sync submodule to the latest commit
+      - name: Update State Component Submodule
+        run: |
+          git submodule update --remote libs/state-components
+          git add libs/state-components
+          git commit -m "Update state-components submodule reference to the latest commit"
+          git push
+
+  deploy-custapp:
+    needs: update-state-components
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy CustApp Placeholder
+        run: echo "Deploy CustApp Placeholder"
