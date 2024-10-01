@@ -22,8 +22,9 @@ jobs:
           git config --global url."https://${{ secrets.CUSTAPP_REPO_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
       # Step 3: Update state-components submodule
-      - name: Update submodules
-        run: git submodule update --init --recursive
+      - name: Update state-components submodule
+        run: |
+          git submodule update --init --recursive ./state-components
 
       # Step 4: Deploy Placeholder
       - name: Deploy CustApp Placeholder
