@@ -1,4 +1,4 @@
-name: Update CustApp Submodule
+name: Update State Components in CustApp
 
 on:
   repository_dispatch:
@@ -7,23 +7,24 @@ on:
 jobs:
   update-state-components:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      # Step 1: Checkout CustApp repository without submodules
+      - name: Checkout CustApp repository
         uses: actions/checkout@v3
         with:
-          submodules: true # To ensure we update the submodules
+          submodules: false  # Skip the default submodule checkout
+          token: ${{ secrets.CUSTAPP_REPO_TOKEN }}  # Use the token to checkout the main repository
 
-      # Sync submodule to the latest commit
-      - name: Update State Component Submodule
+      # Step 2: Authenticate Git with Personal Access Token
+      - name: Authenticate Git
         run: |
-          git submodule update --remote libs/state-components
-          git add libs/state-components
-          git commit -m "Update state-components submodule reference to the latest commit"
-          git push
+          git config --global url."https://${{ secrets.CUSTAPP_REPO_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
-  deploy-custapp:
-    needs: update-state-components
-    runs-on: ubuntu-latest
-    steps:
+      # Step 3: Update state-components submodule
+      - name: Update submodules
+        run: git submodule update --init --recursive
+
+      # Step 4: Deploy Placeholder
       - name: Deploy CustApp Placeholder
         run: echo "Deploy CustApp Placeholder"
