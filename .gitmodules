@@ -1,0 +1,3 @@
+[submodule "state-components"]
+	path = state-components
+	url = git@github.com:bgfborges/state-components.git
