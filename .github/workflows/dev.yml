@@ -61,7 +61,11 @@ jobs:
           git commit -m "Update state-components submodule reference to the latest commit"
           git push origin dev
           git checkout qa
+          cd state-components
           git pull origin qa
+          git checkout qa
+          git pull origin qa  # Pull the latest changes from the dev branch
+          cd ..
           git add state-components
           git commit -m "Update state-components submodule reference to the latest commit"
           git push origin qa
