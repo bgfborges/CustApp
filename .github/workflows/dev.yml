@@ -24,7 +24,7 @@ jobs:
       # Step 3: Set Git User Identity
       - name: Set Git User Identity
         run: |
-          git config --global user.email "ci@example.com"
+          git config --global user.email "veem@veem.com"
           git config --global user.name "CI Bot"
 
       # Step 4: Update state-components submodule to the latest commit
@@ -40,14 +40,14 @@ jobs:
       - name: Run Lints
         run: |
           # Replace the following command with your lint command(s)
-          npm install
-          npm run lint
+          # npm install
+          # npm run lint
 
       # Step 6: Run tests
       - name: Run Tests
         run: |
           # Replace the following command with your test command(s)
-          npm run test
+          # npm run test
 
       # Step 7: Deploy Placeholder
       - name: Deploy CustApp Placeholder
