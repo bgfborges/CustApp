@@ -89,19 +89,21 @@ jobs:
             exit 1
           fi
 
-      - name: Update state-components submodule
+      # Step 10: Update the submodule reference in the CustApp QA branch
+      - name: Update state-components submodule reference in CustApp QA branch
         if: env.qa-action == 'true'
         run: |
+          git checkout qa
           git submodule update --init --recursive
           cd state-components
-          git checkout qa  # Ensure the submodule is on the dev branch
-          git pull origin qa  # Pull the latest changes from the dev branch
+          git checkout qa  # Ensure the submodule is on the QA branch
+          git pull origin qa  # Pull the latest changes from the QA branch
           cd ..
           git add state-components
-          git commit -m "Update state-components submodule reference to the latest commit"
+          git commit -m "Update state-components submodule reference to the latest commit in QA branch"
           git push origin qa
 
-      # Step 10: Run lints
+      # Step 11: Run lints
       - name: Run Lints
         if: env.should-run == 'true'
         run: |
@@ -109,14 +111,14 @@ jobs:
           # npm install
           # npm run lint
 
-      # Step 11: Run tests
+      # Step 12: Run tests
       - name: Run Tests
         if: env.should-run == 'true'
         run: |
           # Replace the following command with your test command(s)
           # npm run test
 
-      # Step 12: Deploy Placeholder
+      # Step 13: Deploy Placeholder
       - name: Deploy CustApp Placeholder
         if: env.should-run == 'true'
         run: echo "Deploy CustApp Placeholder"
