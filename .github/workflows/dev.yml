@@ -61,11 +61,15 @@ jobs:
           git push origin dev
 
       # Step 8: Check qa-action from client-payload
-      - name: Check qa-action from client-payload
-        id: check-qa-action
-        if: env.should-run == 'true'
+      - name: Check commit message for --ca-qa flag
+        id: check-commit
         run: |
-          echo "qa-action=${{ github.event.client_payload.qa-action }}" >> $GITHUB_ENV
+          LATEST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          if [[ "$LATEST_COMMIT_MESSAGE" == *"--ca-qa"* ]]; then
+            echo "qa-action=true" >> $GITHUB_ENV
+          else
+            echo "qa-action=false" >> $GITHUB_ENV
+          fi
 
       # Step 9: Merge to qa branch if qa-action is true
       - name: Merge dev into qa branch
