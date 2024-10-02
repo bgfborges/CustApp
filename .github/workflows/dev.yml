@@ -80,8 +80,9 @@ jobs:
       - name: Merge state-components dev into qa branch
         if: env.qa-action == 'true'
         run: |
+          git checkout dev  # Checkout the latest dev branch
+          git pull origin dev
           git checkout qa  # Checkout the latest qa branch
-          git pull origin qa
           git merge dev --allow-unrelated-histories  # Attempt to merge dev into qa, allowing unrelated histories
 
           # Handle conflicts, if any
