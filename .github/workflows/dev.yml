@@ -92,6 +92,7 @@ jobs:
           else
             echo "Merge conflict detected, please resolve manually."
             exit 1
+          fi
 
       # Step 10: Update the submodule reference in the CustApp QA branch
       - name: Update state-components submodule reference in CustApp QA branch
