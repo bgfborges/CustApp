@@ -71,7 +71,7 @@ jobs:
           fi
 
       # Step 9: Merge to qa branch if qa-action is true
-      - name: Merge dev into qa branch
+      - name: Merge state-components dev into qa branch
         if: env.qa-action == 'true'
         run: |
           cd state-components
@@ -88,6 +88,18 @@ jobs:
             echo "Merge conflict detected, please resolve manually."
             exit 1
           fi
+
+      - name: Update state-components submodule
+        if: env.qa-action == 'true'
+        run: |
+          git submodule update --init --recursive
+          cd state-components
+          git checkout qa  # Ensure the submodule is on the dev branch
+          git pull origin qa  # Pull the latest changes from the dev branch
+          cd ..
+          git add state-components
+          git commit -m "Update state-components submodule reference to the latest commit"
+          git push origin qa
 
       # Step 10: Run lints
       - name: Run Lints
