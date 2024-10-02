@@ -21,30 +21,46 @@ jobs:
         id: check-branch
         run: echo "::set-output name=should-run::$([[ '${{ github.event.client_payload.ref }}' == 'refs/heads/dev' ]] && echo true || echo false)"
 
-      # Step 3: Authenticate Git with Personal Access Token
+      # Step 3: Exit if not on dev branch
+      - name: Exit if not on dev branch
+        if: steps.check-branch.outputs.should-run != 'true'
+        run: |
+          echo "This workflow only runs on the dev branch. Exiting..."
+          exit 0
+
+      # Step 4: Checkout dev branch
+      - name: Checkout dev branch
+        if: steps.check-branch.outputs.should-run == 'true'
+        run: |
+          git checkout dev
+
+      # Step 5: Authenticate Git with Personal Access Token
       - name: Authenticate Git
         if: steps.check-branch.outputs.should-run == 'true'
         run: |
           git config --global url."https://${{ secrets.CUSTAPP_REPO_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
-      # Step 4: Set Git User Identity
+      # Step 6: Set Git User Identity
       - name: Set Git User Identity
         if: steps.check-branch.outputs.should-run == 'true'
         run: |
           git config --global user.email "ci@example.com"
           git config --global user.name "CI Bot"
 
-      # Step 5: Update state-components submodule to the latest commit
+      # Step 7: Update state-components submodule to the latest commit on dev branch
       - name: Update state-components submodule
         if: steps.check-branch.outputs.should-run == 'true'
         run: |
           git submodule update --init --recursive
-          git submodule update --remote state-components
+          cd state-components
+          git checkout dev  # Ensure the submodule is on the dev branch
+          git pull origin dev  # Pull the latest changes from the dev branch
+          cd ..
           git add state-components
           git commit -m "Update state-components submodule reference to the latest commit"
-          git push
+          git push origin dev
 
-      # Step 6: Run lints
+      # Step 8: Run lints
       - name: Run Lints
         if: steps.check-branch.outputs.should-run == 'true'
         run: |
@@ -52,14 +68,14 @@ jobs:
           # npm install
           # npm run lint
 
-      # Step 7: Run tests
+      # Step 9: Run tests
       - name: Run Tests
         if: steps.check-branch.outputs.should-run == 'true'
         run: |
           # Replace the following command with your test command(s)
           # npm run test
 
-      # Step 8: Deploy Placeholder
+      # Step 10: Deploy Placeholder
       - name: Deploy CustApp Placeholder
         if: steps.check-branch.outputs.should-run == 'true'
         run: echo "Deploy CustApp Placeholder"
