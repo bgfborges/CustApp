@@ -3,6 +3,8 @@ name: Update State Components in CustApp
 on:
   repository_dispatch:
     types: [update-submodule]
+    # Limit this workflow to be triggered only if it affects the dev branch
+    if: ${{ github.event.client_payload.ref == 'refs/heads/dev' }}
 
 jobs:
   update-state-components:
