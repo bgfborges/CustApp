@@ -90,19 +90,19 @@ jobs:
           git commit -m "Update state-components submodule reference to the latest commit"
           git push origin qa
 
-      # Step 10: Update the submodule reference in the CustApp QA branch
-      - name: Update state-components submodule reference in CustApp QA branch
-        if: env.qa-action == 'true'
-        run: |
-          git checkout qa
-          git submodule update --init --recursive
-          cd state-components
-          git checkout qa  # Ensure the submodule is on the QA branch
-          git pull origin qa  # Pull the latest changes from the QA branch
-          cd ..
-          git add state-components
-          git commit -m "Update state-components submodule reference to the latest commit in QA branch"
-          git push origin qa
+      # # Step 10: Update the submodule reference in the CustApp QA branch
+      # - name: Update state-components submodule reference in CustApp QA branch
+      #   if: env.qa-action == 'true'
+      #   run: |
+      #     git checkout qa
+      #     git submodule update --init --recursive
+      #     cd state-components
+      #     git checkout qa  # Ensure the submodule is on the QA branch
+      #     git pull origin qa  # Pull the latest changes from the QA branch
+      #     cd ..
+      #     git add state-components
+      #     git commit -m "Update state-components submodule reference to the latest commit in QA branch"
+      #     git push origin qa
 
       # Step 11: Run lints
       - name: Run Lints
