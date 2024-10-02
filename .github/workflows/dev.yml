@@ -51,6 +51,7 @@ jobs:
       - name: Update state-components submodule
         if: env.should-run == 'true'
         run: |
+          git fetch --all
           git submodule update --init --recursive
           cd state-components
           git checkout dev  # Ensure the submodule is on the dev branch
