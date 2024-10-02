@@ -77,23 +77,18 @@ jobs:
           git fetch --all
 
       # Step 9: Merge state-components dev into qa branch
-      - name: Merge state-components dev into qa branch
-        if: env.qa-action == 'true'
+      - name: Update QA Reference state-components
+        if: env.should-run == 'true'
         run: |
-          git checkout dev  # Checkout the latest dev branch
-          git pull origin dev
-          git checkout qa  # Checkout the latest qa branch
-          git merge dev --allow-unrelated-histories  # Attempt to merge dev into qa, allowing unrelated histories
-
-          # Handle conflicts, if any
-          if git diff --check --exit-code; then
-            # No conflicts, proceed to merge
-            git push origin qa
-            echo "Merged dev into qa successfully."
-          else
-            echo "Merge conflict detected, please resolve manually."
-            exit 1
-          fi
+          git checkout qa
+          git submodule update --init --recursive
+          cd state-components
+          git checkout qa  # Ensure the submodule is on the dev branch
+          git pull origin qa  # Pull the latest changes from the dev branch
+          cd ..
+          git add state-components
+          git commit -m "Update state-components submodule reference to the latest commit"
+          git push origin qa
 
       # Step 10: Update the submodule reference in the CustApp QA branch
       - name: Update state-components submodule reference in CustApp QA branch
