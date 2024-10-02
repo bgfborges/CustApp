@@ -3,8 +3,6 @@ name: Update State Components in CustApp
 on:
   repository_dispatch:
     types: [update-submodule]
-    # Limit this workflow to be triggered only if it affects the dev branch
-    if: ${{ github.event.client_payload.ref == 'refs/heads/dev' }}
 
 jobs:
   update-state-components:
@@ -18,19 +16,27 @@ jobs:
           submodules: false  # Skip the default submodule checkout
           token: ${{ secrets.CUSTAPP_REPO_TOKEN }}  # Use the token to checkout the main repository
 
-      # Step 2: Authenticate Git with Personal Access Token
+      # Step 2: Check if the branch is 'dev'
+      - name: Check branch
+        id: check-branch
+        run: echo "::set-output name=should-run::$([[ '${{ github.event.client_payload.ref }}' == 'refs/heads/dev' ]] && echo true || echo false)"
+
+      # Step 3: Authenticate Git with Personal Access Token
       - name: Authenticate Git
+        if: steps.check-branch.outputs.should-run == 'true'
         run: |
           git config --global url."https://${{ secrets.CUSTAPP_REPO_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
-      # Step 3: Set Git User Identity
+      # Step 4: Set Git User Identity
       - name: Set Git User Identity
+        if: steps.check-branch.outputs.should-run == 'true'
         run: |
           git config --global user.email "ci@example.com"
           git config --global user.name "CI Bot"
 
-      # Step 4: Update state-components submodule to the latest commit
+      # Step 5: Update state-components submodule to the latest commit
       - name: Update state-components submodule
+        if: steps.check-branch.outputs.should-run == 'true'
         run: |
           git submodule update --init --recursive
           git submodule update --remote state-components
@@ -38,19 +44,22 @@ jobs:
           git commit -m "Update state-components submodule reference to the latest commit"
           git push
 
-      # Step 5: Run lints
+      # Step 6: Run lints
       - name: Run Lints
+        if: steps.check-branch.outputs.should-run == 'true'
         run: |
           # Replace the following command with your lint command(s)
           # npm install
           # npm run lint
 
-      # Step 6: Run tests
+      # Step 7: Run tests
       - name: Run Tests
+        if: steps.check-branch.outputs.should-run == 'true'
         run: |
           # Replace the following command with your test command(s)
           # npm run test
 
-      # Step 7: Deploy Placeholder
+      # Step 8: Deploy Placeholder
       - name: Deploy CustApp Placeholder
+        if: steps.check-branch.outputs.should-run == 'true'
         run: echo "Deploy CustApp Placeholder"
