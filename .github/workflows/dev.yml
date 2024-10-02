@@ -59,50 +59,10 @@ jobs:
           git add state-components
           git commit -m "Update state-components submodule reference to the latest commit"
           git push origin dev
-
-      # Step 8: Check qa-action from client payload
-      - name: Check qa-action from client payload
-        id: check-qa-action
-        run: |
-          if [[ '${{ github.event.client_payload.qa-action }}' == *"--ca-qa"* ]]; then
-            echo "qa-action=true" >> $GITHUB_ENV
-          else
-            echo "qa-action=false" >> $GITHUB_ENV
-          fi
-
-      # Step 9: Merge to qa branch if qa-action is true
-      - name: Fetch all branches
-        if: env.qa-action == 'true'
-        run: |
-          git fetch --all
-
-      # Step 9: Merge state-components dev into qa branch
-      - name: Update QA Reference state-components
-        if: env.should-run == 'true'
-        run: |
           git checkout qa
-          git submodule update --init --recursive
-          cd state-components
-          git checkout qa  # Ensure the submodule is on the dev branch
-          git pull origin qa  # Pull the latest changes from the dev branch
-          cd ..
-          git add state-components
+          git pull origin qa
           git commit -m "Update state-components submodule reference to the latest commit"
           git push origin qa
-
-      # # Step 10: Update the submodule reference in the CustApp QA branch
-      # - name: Update state-components submodule reference in CustApp QA branch
-      #   if: env.qa-action == 'true'
-      #   run: |
-      #     git checkout qa
-      #     git submodule update --init --recursive
-      #     cd state-components
-      #     git checkout qa  # Ensure the submodule is on the QA branch
-      #     git pull origin qa  # Pull the latest changes from the QA branch
-      #     cd ..
-      #     git add state-components
-      #     git commit -m "Update state-components submodule reference to the latest commit in QA branch"
-      #     git push origin qa
 
       # Step 11: Run lints
       - name: Run Lints
