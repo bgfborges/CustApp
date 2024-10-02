@@ -71,11 +71,15 @@ jobs:
           fi
 
       # Step 9: Merge to qa branch if qa-action is true
+      - name: Fetch all branches
+        if: env.qa-action == 'true'
+        run: |
+          git fetch --all
+
       - name: Merge state-components dev into qa branch
         if: env.qa-action == 'true'
         run: |
-          cd state-components
-          git checkout qa  # Get the latest qa branch
+          git checkout qa  # Checkout the latest qa branch
           git pull origin qa
           git merge dev  # Attempt to merge dev into qa
 
@@ -87,7 +91,6 @@ jobs:
           else
             echo "Merge conflict detected, please resolve manually."
             exit 1
-          fi
 
       # Step 10: Update the submodule reference in the CustApp QA branch
       - name: Update state-components submodule reference in CustApp QA branch
