@@ -60,12 +60,11 @@ jobs:
           git commit -m "Update state-components submodule reference to the latest commit"
           git push origin dev
 
-      # Step 8: Check qa-action from client-payload
-      - name: Check commit message for --ca-qa flag
-        id: check-commit
+      # Step 8: Check qa-action from client payload
+      - name: Check qa-action from client payload
+        id: check-qa-action
         run: |
-          LATEST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          if [[ "$LATEST_COMMIT_MESSAGE" == *"--ca-qa"* ]]; then
+          if [[ '${{ github.event.client_payload.qa-action }}' == *"--ca-qa"* ]]; then
             echo "qa-action=true" >> $GITHUB_ENV
           else
             echo "qa-action=false" >> $GITHUB_ENV
